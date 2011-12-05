@@ -1,0 +1,9 @@
+category: Database
+requires:
+external-source: virtuoso-opensource
+sdesc: "Virtuoso high-performance SQL database (SyncML VAD module)"
+ldesc: "OpenLink Virtuoso is a high-performance object-relational SQL 
+database. It provides transactions, a smart SQL compiler, hot backup, 
+SQL:1999 support, a powerful stored-procedure language supporting 
+server-side Java or .NET, and more. It supports all major data-access 
+interfaces, including ODBC, JDBC, ADO.NET, and OLE/DB."

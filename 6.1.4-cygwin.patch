@@ -1,0 +1,109 @@
+--- origsrc/virtuoso-opensource-6.1.4/binsrc/sync/make_vad.sh	2011-10-26 08:54:01.000000000 -0500
++++ src/virtuoso-opensource-6.1.4/binsrc/sync/make_vad.sh	2011-11-25 01:43:02.178314300 -0600
+@@ -60,6 +60,16 @@ LN="ln -fs"
+ RM="rm -f"
+ fi
+ 
++if [ "z$SERVER" = "z" ]
++then
++    if [ "x$HOST_OS" != "x" ]
++    then
++        SERVER=virtuoso-odbc-t.exe
++    else
++        SERVER=virtuoso
++    fi
++fi
++
+ . $HOME/binsrc/tests/suite/test_fn.sh
+ 
+ if [ -f /usr/xpg4/bin/rm ]
+@@ -108,9 +118,9 @@ virtuoso_start() {
+   $myrm -f *.lck
+   if [ "x$HOST_OS" != "x" ]
+   then
+-      $BUILD/../bin/virtuoso-odbc-t +foreground &
++      $SERVER +foreground &
+   else
+-      virtuoso +wait
++      $SERVER +wait
+   fi
+   stat="true"
+   while true 
+--- origsrc/virtuoso-opensource-6.1.4/binsrc/tutorial/make_vad.sh	2011-10-26 08:54:01.000000000 -0500
++++ src/virtuoso-opensource-6.1.4/binsrc/tutorial/make_vad.sh	2011-11-25 00:52:03.465438400 -0600
+@@ -588,7 +588,7 @@ vad_create() {
+ 
+ generate_files() {
+   do_command_safe $DSN "load dev.sql"
+-  do_command_safe $DSN "TUT_generate_files('/vad_files/vsp/tutorial')"
++#  do_command_safe $DSN "TUT_generate_files('/vad_files/vsp/tutorial')"
+     #if [ "x$HOST_OS" = "x" ]
+     #then
+       #tar xzf $HOME/binsrc/samples/IBuySpy/ibuyspy_mono_virtuoso_client.tar.gz
+--- origsrc/virtuoso-opensource-6.1.4/binsrc/virtuoso/Makefile.am	2009-10-16 11:57:47.000000000 -0500
++++ src/virtuoso-opensource-6.1.4/binsrc/virtuoso/Makefile.am	2011-11-07 00:45:10.486509400 -0600
+@@ -34,9 +34,9 @@ endif
+ if WITH_IODBC
+     IODBC_LIBS=libvirtuoso-iodbc-t.la
+     IODBC_PROGS=virtuoso-iodbc-t
+-    VIRTUOSO_BIN=virtuoso-iodbc-t
++    VIRTUOSO_BIN=virtuoso-iodbc-t$(EXEEXT)
+ else
+-    VIRTUOSO_BIN=virtuoso-t
++    VIRTUOSO_BIN=virtuoso-t$(EXEEXT)
+ endif
+ 
+ LIBS		+= @ZLIB_LIB@
+--- origsrc/virtuoso-opensource-6.1.4/libsrc/Wi/CLIsql2.c	2011-03-02 06:24:08.000000000 -0600
++++ src/virtuoso-opensource-6.1.4/libsrc/Wi/CLIsql2.c	2011-11-25 03:02:18.849899700 -0600
+@@ -2075,6 +2075,8 @@ virtodbc__SQLGetInfo (
+     case SQL_DRIVER_NAME:
+ #ifdef WIN32
+       strres = "virtodbc40.dll";
++#elif defined(__CYGWIN__)
++      strres = "virtodbc.dll";
+ #else
+       strres = "virtodbc.so";
+ #endif
+--- origsrc/virtuoso-opensource-6.1.4/libsrc/Wi/bif_file.c	2011-10-26 08:54:19.000000000 -0500
++++ src/virtuoso-opensource-6.1.4/libsrc/Wi/bif_file.c	2011-11-07 00:42:34.466294000 -0600
+@@ -6161,7 +6161,7 @@ signal_error:
+ }
+ 
+ 
+-#if defined(__APPLE__)
++#if defined(__APPLE__) || defined(__CYGWIN__)
+ #define fseeko64 fseeko
+ #define ftello64 ftello
+ #define fopen64  fopen
+--- origsrc/virtuoso-opensource-6.1.4/libsrc/Wi/disk.c	2011-10-26 08:54:19.000000000 -0500
++++ src/virtuoso-opensource-6.1.4/libsrc/Wi/disk.c	2011-11-06 23:01:04.934924400 -0600
+@@ -1394,7 +1394,7 @@ bp_make_buffer_list (int n)
+       buf->bd_timestamp = 0;
+     }
+ 
+-#if HAVE_SYS_MMAN_H && !defined(__FreeBSD__)
++#if HAVE_SYS_MMAN_H && !defined(__FreeBSD__) && !defined(__CYGWIN__)
+   if (cf_lock_in_mem)
+     {
+       int rc = mlockall (MCL_CURRENT);
+@@ -2725,7 +2725,7 @@ wi_close()
+ 
+   buffer_free (cp_buf);
+ 
+-#if HAVE_SYS_MMAN_H && !defined(__FreeBSD__)
++#if HAVE_SYS_MMAN_H && !defined(__FreeBSD__) && !defined(__CYGWIN__)
+   if (cf_lock_in_mem)
+     munlockall ();
+ #endif
+--- origsrc/virtuoso-opensource-6.1.4/libsrc/plugin/plugin_unix.c	2009-04-09 12:53:08.000000000 -0500
++++ src/virtuoso-opensource-6.1.4/libsrc/plugin/plugin_unix.c	2011-11-25 03:01:37.193584600 -0600
+@@ -33,7 +33,7 @@
+ extern int _gate_export (void *tgt);
+ 
+ const char * so_extensions[] =
+-  { ".so", ".a" };
++  { ".so", ".a", ".dll" };
+ const int so_extensions_n = sizeof (so_extensions) / sizeof (const char*);
+ 
+ unit_version_t *uv_load_and_check_plugin(
