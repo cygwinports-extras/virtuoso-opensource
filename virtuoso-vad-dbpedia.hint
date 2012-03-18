@@ -1,7 +1,7 @@
 category: Database
-requires: libgcc1 libopenssl100
+requires:
 external-source: virtuoso-opensource
-sdesc: "ODBC drivers for OpenLink Virtuoso"
+sdesc: "Virtuoso high-performance SQL database (DBpedia VAD module)"
 ldesc: "OpenLink Virtuoso is a high-performance object-relational SQL 
 database. It provides transactions, a smart SQL compiler, hot backup, 
 SQL:1999 support, a powerful stored-procedure language supporting 

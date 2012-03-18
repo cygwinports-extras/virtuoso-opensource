@@ -16,7 +16,7 @@ odbc_virtuoso_CONTENTS="usr/lib/virtodbc*"
 PKG_IGNORE="usr/lib/lib*"
 
 for vad in bpel conductor demo doc fct isparql ods rdf_mappers sparql_demo \
-           syncml tutorial
+           syncml tutorial dbpedia
 do
 	PKG_NAMES+=" virtuoso-vad-${vad}"
 	declare virtuoso_vad_${vad}_CONTENTS="usr/share/virtuoso/vad/${vad}*"
@@ -51,3 +51,4 @@ src_install() {
 	mv ${D}/usr/share/doc/virtuoso ${D}/usr/share/doc/${PN}
 }
 
+KEEP_LA_FILES="none"
