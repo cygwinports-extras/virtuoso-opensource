@@ -1,0 +1,33 @@
+--- origsrc/virtuoso-opensource-6.1.6/libsrc/Wi/Makefile.am	2012-03-23 07:28:31.000000000 -0500
++++ src/virtuoso-opensource-6.1.6/libsrc/Wi/Makefile.am	2012-11-08 16:23:16.965037200 -0600
+@@ -487,6 +487,7 @@ libwi_la_SOURCES += \
+ 	$(libwi_base_la_sources)
+ 
+ libwi_la_CFLAGS  = $(libwi_base_la_cflags)
++libwi_la_LIBADD  = -lminizip
+ libwi_la_LDLAGS  = -static
+ 
+ #KUBL_UNIV_FILES_ODBC
+@@ -502,6 +503,7 @@ libwi_odbc_la_SOURCES += \
+ 
+ libwi_odbc_la_CFLAGS  = $(libwi_base_la_cflags)
+ libwi_odbc_la_CFLAGS  += -DUNIX_ODBC
++libwi_odbc_la_LIBADD  = -lminizip
+ libwi_odbc_la_LDLAGS  = -static
+ 
+ libwic_la_SOURCES = \
+--- origsrc/virtuoso-opensource-6.1.6/libsrc/Wi/bif_file.c	2012-11-08 16:13:45.485216000 -0600
++++ src/virtuoso-opensource-6.1.6/libsrc/Wi/bif_file.c	2012-11-08 16:21:27.504886100 -0600
+@@ -6201,10 +6201,8 @@ signal_error:
+ #define fopen64  fopen
+ #endif
+ 
+-#include "zlib/contrib/minizip/unzip.h"
+-#include "zlib/contrib/minizip/ioapi.h"
+-#include "zlib/contrib/minizip/ioapi.c"
+-#include "zlib/contrib/minizip/unzip.c"
++#include <minizip/unzip.h>
++#include <minizip/ioapi.h>
+ 
+ static caddr_t
+ bif_unzip_file (caddr_t * qst, caddr_t * err_ret, state_slot_t ** args)
