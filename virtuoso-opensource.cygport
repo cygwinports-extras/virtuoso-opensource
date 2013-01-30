@@ -1,6 +1,6 @@
 NAME="virtuoso-opensource"
 VERSION=6.1.6
-RELEASE=1
+RELEASE=2
 CATEGORY="Database"
 SUMMARY="OpenLink Virtuoso high-perfomance SQL database"
 DESCRIPTION="OpenLink Virtuoso is a high-performance object-relational SQL
