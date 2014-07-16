@@ -1,0 +1,57 @@
+--- origsrc/virtuoso-opensource-6.1.6/libsrc/Wi/bif_regexp.c	2012-08-01 15:54:31.000000000 -0500
++++ src/virtuoso-opensource-6.1.6/libsrc/Wi/bif_regexp.c	2013-09-02 12:27:10.585437200 -0500
+@@ -28,7 +28,7 @@
+ #include "multibyte.h"
+ #include "srvmultibyte.h"
+ 
+-#include "util/pcrelib/pcre.h"
++#include <pcre.h>
+ 
+ /*
+    typedef struct rx_query_s {
+--- origsrc/virtuoso-opensource-6.1.6/libsrc/Wi/xqf.c	2012-08-01 15:54:31.000000000 -0500
++++ src/virtuoso-opensource-6.1.6/libsrc/Wi/xqf.c	2013-09-02 12:27:54.163929800 -0500
+@@ -38,7 +38,7 @@
+ #include "xpf.h"
+ #include "xqf.h"
+ 
+-#include "util/pcrelib/pcre.h"
++#include <pcre.h>
+ 
+ #define ecm_isname(c) \
+   ( ((c) & ~0xFF) ? (ecm_utf8props[(c)] & ECM_ISNAME) : \
+--- origsrc/virtuoso-opensource-6.1.6/libsrc/util/Makefile.am	2012-03-23 07:28:31.000000000 -0500
++++ src/virtuoso-opensource-6.1.6/libsrc/util/Makefile.am	2013-09-02 12:36:04.309964500 -0500
+@@ -32,6 +32,7 @@ libutil_la_CFLAGS  += -I$(top_srcdir)/li
+ libutil_la_CFLAGS  += -I$(top_srcdir)/libsrc/Dk
+ libutil_la_CFLAGS  += -DSUPPORT_UTF8
+ libutil_la_LDFLAGS = -prefer-pic
++libutil_la_LIBADD = -lpcre
+ 
+ libutil_la_SOURCES = \
+ 	buildarg.c \
+@@ -88,23 +89,7 @@ libutil_la_SOURCES = \
+ 	virt_wcrtomb.c \
+ 	virt_wcs_mask.c \
+ 	virt_wcsnrtombs.c \
+-	pcrelib/pcre_chartables.c \
+-	pcrelib/pcre_compile.c \
+-	pcrelib/pcre_config.c \
+-	pcrelib/pcre_dfa_exec.c \
+-	pcrelib/pcre_exec.c \
+-	pcrelib/pcre_fullinfo.c \
+-	pcrelib/pcre_get.c \
+-	pcrelib/pcre_globals.c \
+-	pcrelib/pcre_newline.c \
+-	pcrelib/pcre_ord2utf8.c \
+-	pcrelib/pcre_study.c \
+-	pcrelib/pcre_tables.c \
+-	pcrelib/pcre_try_flipped.c \
+-	pcrelib/pcre_ucd.c \
+-	pcrelib/pcre_valid_utf8.c \
+-	pcrelib/pcre_version.c \
+-	pcrelib/pcre_xclass.c
++	$(NULL)
+ 
+ 
+ BUILT_SOURCES = getdate.c

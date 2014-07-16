@@ -1,6 +1,6 @@
 NAME="virtuoso-opensource"
 VERSION=6.1.6
-RELEASE=2
+RELEASE=3
 CATEGORY="Database"
 SUMMARY="OpenLink Virtuoso high-perfomance SQL database"
 DESCRIPTION="OpenLink Virtuoso is a high-performance object-relational SQL
@@ -9,26 +9,27 @@ support, a powerful stored-procedure language supporting server-side Java or
 .NET, and more. It supports all major data-access interfaces, including ODBC,
 JDBC, ADO.NET, and OLE/DB."
 HOMEPAGE="http://www.openlinksw.com/dataspace/dav/wiki/Main/"
-SRC_URI="mirror://sourceforge/virtuoso/${P}.tar.gz"
+SRC_URI="mirror://sourceforge/virtuoso/${NAME}-${VERSION}.tar.gz"
 
+#	http://pkgs.fedoraproject.org/cgit/virtuoso-opensource.git/plain/virtuoso-opensource-6.1.0-nodemos_buildfix.patch
 PATCH_URI="
 	http://pkgs.fedoraproject.org/cgit/virtuoso-opensource.git/plain/virtuoso-opensource-6.1.4-no_strip.patch
 	6.1.4-cygwin.patch
 	6.1.4-no-undefined.patch
 	6.1.6-system-minizip.patch
+	6.1.6-system-iodbc.patch
 "
 
-DISTCLEANFILES="libsrc/odbcsdk/include/*.h"
+DISTCLEANFILES="libsrc/odbcsdk/include/*.h libsrc/Wi/iodbcinst.h libsrc/zlib/contrib/minizip/*.h"
 DIFF_EXCLUDES="*.css *.xml virt_vers*.c *_l.c *_p.c *_p.h scn3*.c sql3.c sql3.h
 	xpathp.c xpathp.h xpscn.c"
 
-PKG_NAMES="${PN} ${PN}-doc virtuoso-vsp-startpage odbc-virtuoso"
+PKG_NAMES="${NAME} ${NAME}-doc odbc-virtuoso"
+virtuoso_opensource_REQUIRES="odbc-virtuoso"
 virtuoso_opensource_CONTENTS="--exclude=html --exclude=images usr/bin/
 	usr/lib/virtuoso/ usr/share/doc/ var/lib/virtuoso/db/"
 virtuoso_opensource_doc_SUMMARY="${SUMMARY} (documentation)"
 virtuoso_opensource_doc_CONTENTS="usr/share/doc/${NAME}/*/"
-virtuoso_vsp_startpage_SUMMARY="${SUMMARY} (web interface)"
-virtuoso_vsp_startpage_CONTENTS="var/lib/virtuoso/vsp/"
 odbc_virtuoso_SUMMARY="ODBC connector driver for OpenLink Virtuoso"
 odbc_virtuoso_CONTENTS="usr/lib/virtodbc*"
 PKG_IGNORE="usr/lib/lib* usr/lib/hibernate/ usr/lib/jdbc* usr/lib/jena/ usr/lib/sesame/"
@@ -40,6 +41,8 @@ do
 	declare virtuoso_vad_${vad}_SUMMARY="${SUMMARY} (${vad} VAD module)"
 	declare virtuoso_vad_${vad}_CONTENTS="usr/share/virtuoso/vad/${vad}*"
 done
+virtuoso_vad_conductor_OBSOLETES="virtuoso-vsp-startpage"
+virtuoso_vad_conductor_CONTENTS+=" var/lib/virtuoso/vsp/"
 
 src_compile() {
 	cd ${S}
